@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>React Workshop - Errors and debugging</title>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <script type="text/babel">
+    function fetchUser(username) {
+      return new Promise((resolve, reject) => {
+        if (username === "andy") {
+          resolve({ username: 'andy', firstName: 'Andy', lastName: 'Mitchell' });
+        } else {
+          reject(new Error(`Who is this user ${username} you speak of?`));
+        }
+      })
+    }
+
+    function UserTable({ user }) {
+      return (
+        <table>
+          <tbody>
+            <tr>
+              <td>Username</td>
+              <td>{user.username}</td>
+            </tr>
+
+            <tr>
+              <td>First name</td>
+              <td>{user.firstName}</td>
+            </tr>
+
+            <tr>
+              <td>Last name</td>
+              <td>{user.lastName}</td>
+            </tr>
+          </tbody>
+        </table>
+      );
+    }
+
+    function User ({ username }) {
+      const [user, setUser] = React.useState({});
+
+      React.useEffect(() => {
+        fetchUser(username)
+          .then(setUser);
+      }, [username])
+
+      return <UserTable user={user} />
+    }
+
+    function App () {
+      return (
+        <React.Fragment>
+          <h1>Welcome to my app</h1>
+          <p>I some times put things here</p>
+          <div>
+            <p>This is my user:</p>
+            <User username={ 'andy' } />
+          </div>
+          <p>I also put things here</p>
+        </React.Fragment>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
