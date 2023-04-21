@@ -49,22 +49,15 @@
 
     function User ({ username }) {
       const [user, setUser] = React.useState({});
-      const [error, setError] = React.useState(null);
+      const throwError = useAsyncError();
 
       React.useEffect(() => {
         fetchUser(username)
           .then(setUser)
-          .catch(error => {
-            console.error(error);
-            setError(error);
-          });
+          .catch(throwError);
       }, [username])
 
-      if (error) {
-        return <p>{ error.message }</p>
-      } else {
-        return <UserTable user={user} />
-      }
+      return <UserTable user={user} />
     }
 
     function App () {
@@ -80,6 +73,16 @@
         </React.Fragment>
       );
     }
+
+    const useAsyncError = () => {
+      const [_, setError] = React.useState();
+
+      return React.useCallback(error => {
+        setError(() => {
+          throw error;
+        });
+      }, [setError]);
+    };
 
     class ErrorBoundary extends React.Component {
       constructor(props) {
