@@ -81,8 +81,43 @@
       );
     }
 
+    class ErrorBoundary extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { error: null };
+      }
+
+      static getDerivedStateFromError(error) {
+        return { error: error };
+      }
+
+      componentDidCatch(error, errorInfo) {
+        // Probably ought to send this to a real logging service not
+        // just tell our users
+        console.error({ error, errorInfo });
+      }
+
+      render() {
+        if (this.state.error) {
+          return (
+            <React.Fragment>
+              <h1>This application is broken</h1>
+              <p>I probably should'nt tell you this but the error is:</p>
+              <p>{ this.state.error.message }</p>
+            </React.Fragment>
+          )
+        } else {
+          return this.props.children;
+        }
+      }
+    }
+
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    root.render(
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    );
   </script>
 </body>
 
