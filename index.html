@@ -49,13 +49,22 @@
 
     function User ({ username }) {
       const [user, setUser] = React.useState({});
+      const [error, setError] = React.useState(null);
 
       React.useEffect(() => {
         fetchUser(username)
-          .then(setUser);
+          .then(setUser)
+          .catch(error => {
+            console.error(error);
+            setError(error);
+          });
       }, [username])
 
-      return <UserTable user={user} />
+      if (error) {
+        return <p>{ error.message }</p>
+      } else {
+        return <UserTable user={user} />
+      }
     }
 
     function App () {
